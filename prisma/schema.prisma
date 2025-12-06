@@ -83,21 +83,50 @@ model VerificationToken {
 model UserProfile {
   id                    String           @id @default(cuid())
   userId                String           @unique
-  age                   Int?
+  
+  // ============================================
+  // PERFIL PROFESIONAL (UNIVERSAL - REUTILIZABLE)
+  // ============================================
+  
+  // Demográficos
+  birthYear             Int?
   country               String?
+  city                  String?
   gender                Gender?
-  yearsSinceGraduation  Int?
-  yearsPerformingEgd    Int?
-  egdPerYear            Int?
+  
+  // Institucional (auto-completa para @gedyt.com.ar)
+  institution           String?          // "GEDyT" auto, otros preguntan
+  institutionType       InstitutionType? // "PRIVATE" auto para GEDyT
+  hasAdvancedImaging    Boolean          @default(false) // true auto para GEDyT
+  
+  // Carrera profesional
+  medicalGraduationYear Int?
+  egdStartYear          Int?
+  
+  // Volumen (medido por semana)
+  egdPerWeek            String?          // "menos-5", "5-10", "11-20", "21-30", "mas-30"
+  egdPerWeekMidpoint    Int?             // Calculado: 2, 7, 15, 25, 35
+  estimatedEgdPerYear   Int?             // Calculado: midpoint × 50
+  
+  // Formación
   hasFellowship         Boolean          @default(false)
   hasAdvancedTraining   Boolean          @default(false)
+  
+  // Experiencia (calculado dinámicamente en base a años)
   experienceLevel       ExperienceLevel?
+  
+  // ============================================
+  // ESPECÍFICO DE GRACE
+  // ============================================
+  
   knewGraceBefore       Boolean          @default(false)
-  usesOtherScales       String[]
+  usesOtherScales       String[]         // ["PEACE", "Crema", "Barcelona", "Toronto"]
   usesSimethicone       Boolean          @default(false)
-  institutionType       InstitutionType?
-  hasAdvancedImaging    Boolean          @default(false)
-  wantsFutureStudies    Boolean          @default(false)
+  
+  // ============================================
+  // META
+  // ============================================
+  
   completedAt           DateTime?
   createdAt             DateTime         @default(now())
   updatedAt             DateTime         @updatedAt
