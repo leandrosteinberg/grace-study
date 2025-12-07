@@ -11,28 +11,13 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  cookies: {
-    sessionToken: {
-      name: process.env.NODE_ENV === "production" 
-        ? `__Secure-next-auth.session-token` 
-        : `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-  },
   callbacks: {
-    async signIn({ user, account, profile }) {
-      // Crear o actualizar usuario en la base de datos
+    async signIn({ user, account }) {
       const existingUser = await prisma.user.findUnique({
         where: { email: user.email! },
       })
 
       if (!existingUser) {
-        // Crear nuevo usuario
         const isGedyt = user.email?.endsWith("@gedyt.com.ar") || false
         const role = adminEmails.includes(user.email!) ? "ADMIN" : "PARTICIPANT"
 
@@ -47,7 +32,6 @@ export const authOptions: NextAuthOptions = {
           },
         })
       } else {
-        // Actualizar último login
         await prisma.user.update({
           where: { email: user.email! },
           data: { lastLogin: new Date() },
@@ -56,32 +40,15 @@ export const authOptions: NextAuthOptions = {
 
       return true
     },
-    async jwt({ token, user, account }) {
-      if (user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user.email! },
-          include: { profile: true },
-        })
-
-        if (dbUser) {
-          token.id = dbUser.id
-          token.role = dbUser.role
-          token.hasCompletedProfile = !!dbUser.profile?.completedAt
-        }
-      }
-      return token
-    },
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string
-        session.user.role = token.role as "ADMIN" | "PARTICIPANT"
-        session.user.hasCompletedProfile = token.hasCompletedProfile as boolean
+      if (session.user && token.sub) {
+        session.user.id = token.sub
       }
       return session
     },
   },
   pages: {
-    signIn: "/login",
+    signIn: "/",
   },
   session: {
     strategy: "jwt",

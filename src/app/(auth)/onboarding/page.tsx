@@ -39,28 +39,28 @@ export default function OnboardingPage() {
     usesSimethicone: false,
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setLoading(true)
+try {
+    const res = await fetch("/api/users/profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    })
 
-    try {
-      const res = await fetch("/api/users/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      })
-
-      if (res.ok) {
-        router.push("/dashboard")
-      } else {
-        alert("Error al guardar el perfil")
-      }
-    } catch (error) {
+    if (res.ok) {
+      // Redirigir al dashboard - el chequeo se hace server-side
+      window.location.href = "/dashboard"
+    } else {
       alert("Error al guardar el perfil")
-    } finally {
-      setLoading(false)
     }
+  } catch (error) {
+    alert("Error al guardar el perfil")
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div className="min-h-screen bg-gedyt-gray-light py-12 px-4">
