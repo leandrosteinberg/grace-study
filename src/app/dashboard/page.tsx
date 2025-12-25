@@ -31,6 +31,8 @@ export default async function DashboardPage() {
     where: { userId: user.id },
   })
 
+  console.log('📊 USER PROGRESS:', JSON.stringify(userProgress, null, 2))
+  
   const completedModules = userProgress.filter(p => p.status === 'COMPLETED').length
   const totalModules = modules.filter(m => m.moduleType === 'EDUCATIONAL').length
 

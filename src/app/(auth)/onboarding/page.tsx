@@ -69,10 +69,10 @@ try {
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-gedyt-blue mb-2">
-              Completá tu perfil
+              ¡Hola {session?.user?.name?.split(' ')[0] || 'Doctor/a'}! Bienvenido/a a GRACE
             </h1>
             <p className="text-gray-600">
-              Necesitamos algunos datos para personalizar tu experiencia
+              Para personalizar tu experiencia, necesitamos hacerte algunas preguntas sobre tu práctica profesional
             </p>
             <div className="mt-4 flex justify-center gap-2">
               <div className={`h-2 w-24 rounded ${step >= 1 ? 'bg-gedyt-light-blue' : 'bg-gray-200'}`} />

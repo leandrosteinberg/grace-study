@@ -180,6 +180,8 @@ model UserModuleProgress {
   startedAt   DateTime?
   completedAt DateTime?
   timeSpent   Int            @default(0)
+  quizAnswers  Json?      
+  quizScore    Int?       
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
